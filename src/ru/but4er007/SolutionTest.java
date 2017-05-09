@@ -159,6 +159,33 @@ public class SolutionTest {
         assertEquals(6, Solution.main(args));
     }
 
+    @Test
+    public void longCircleWithBigRoadCost() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("1000 1000 10 ");
+
+        // fill types
+        int currentType = 1;
+        for (int i = 1; i <= 1000; i++) {
+            builder.append(" 1 ")
+                    .append(currentType);
+            currentType = (currentType) % 10 + 1;
+        }
+
+        // fill roads
+        for (int i = 1; i < 1000; i++) {
+            builder.append(" ")
+                    .append(i)
+                    .append(" ")
+                    .append(i + 1)
+                    .append(" ")
+                    .append(1000);
+        }
+        builder.append(" 1 1000 1000 ");
+
+        assertEquals(9000, Solution.main(new String[]{builder.toString()}));
+    }
+
     // region test bit mask operations
     @Test
     public void testBitMaskPutType() {
