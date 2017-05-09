@@ -9,37 +9,39 @@ public class SolutionTest {
     // example https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Cycle_graph_C5.png/240px-Cycle_graph_C5.png
     @Test
     public void testSimpleCircle() {
-        String[] args = {"5", "5", "5",
-                "1", "1",
-                "1", "2",
-                "1", "3",
-                "1", "4",
-                "1", "5",
-                "1", "2", "10",
-                "1", "3", "10",
-                "2", "4", "10",
-                "3", "5", "10",
-                "4", "5", "10" };
-        Solution.main(args);
+        String[] args = {"5 5 5 " +
+                "1 1 " +
+                "1 2 " +
+                "1 3 " +
+                "1 4 " +
+                "1 5 " +
+                "1 2 10 " +
+                "1 3 10 " +
+                "2 4 10 " +
+                "3 5 10 " +
+                "4 5 10" };
+
+        assertEquals(30, Solution.main(args));
     }
 
     // example http://www.cs.ecu.edu/karl/3300/spr15/assignments/Assignment5/graph2.gif
     @Test
     public void testSimpleCircleWithEndVertex() {
-        String[] args = {"6", "6", "6",
-                "1", "1",
-                "1", "2",
-                "1", "3",
-                "1", "4",
-                "1", "5",
-                "1", "6",
-                "1", "2", "1",
-                "1", "3", "1",
-                "2", "4", "10",
-                "2", "5", "1",
-                "3", "6", "1",
-                "4", "6", "10" };
-        Solution.main(args);
+        String[] args = {"6 6 6 " +
+                "1 1 " +
+                "1 2 " +
+                "1 3 " +
+                "1 4 " +
+                "1 5 " +
+                "1 6 " +
+                "1 2 1 " +
+                "1 3 1 " +
+                "2 4 10 " +
+                "2 5 1 " +
+                "3 6 1 " +
+                "4 6 10" };
+
+        assertEquals(21, Solution.main(args));
     }
 
     // region test bit mask operations
