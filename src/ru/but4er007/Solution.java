@@ -2,7 +2,7 @@ package ru.but4er007;
 
 import java.util.*;
 
-public class Solution {
+class Solution {
     private final int shopsCount;
     private final int roadsCount;
     private final int fishTypes;
@@ -24,14 +24,18 @@ public class Solution {
         this.shopFishTypes = shopFishTypes;
     }
 
-    public static void main(String[] args) {
+    static long main(String[] args) {
         final int shopsCount;
         final int roadsCount;
         final int fishTypes;
         final int shopFishTypes[][];
         final int roads[][];
 
-        InputParamsReader in = new InputParamsReader(args);
+        Scanner in;
+        if (args != null && args.length > 0)
+            in = new Scanner(args[0]);
+        else
+            in = new Scanner(System.in);
         shopsCount = in.nextInt();
         roadsCount = in.nextInt();
         fishTypes = in.nextInt();
@@ -57,6 +61,7 @@ public class Solution {
 
         long shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
         System.out.println(shorterWayForTwoCats);
+        return shorterWayForTwoCats;
     }
 
     // find shorter way for get all types of fish by single cat
@@ -219,26 +224,5 @@ public class Solution {
         if ((mask1 | mask2) == mask2) return -1;
         if ((mask1 | mask2) == mask1) return 1;
         return 0;
-    }
-
-    private static class InputParamsReader {
-        private String[] args;
-        private Scanner scanner;
-        private int readCount = 0;
-
-        InputParamsReader(String[] args) {
-            this.args = args;
-            if (args == null || args.length == 0) {
-                scanner = new Scanner(System.in);
-            }
-        }
-
-        int nextInt() {
-            if (args == null || args.length == 0) {
-                return scanner.nextInt();
-            } else {
-                return Integer.valueOf(args[readCount++]);
-            }
-        }
     }
 }
