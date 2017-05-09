@@ -179,11 +179,11 @@ public class SolutionTest {
                     .append(" ")
                     .append(i + 1)
                     .append(" ")
-                    .append(1000);
+                    .append(10000);
         }
-        builder.append(" 1 1000 1000 ");
+        builder.append(" 1 1000 10000 ");
 
-        assertEquals(9000, Solution.main(new String[]{builder.toString()}));
+        assertEquals(90000, Solution.main(new String[]{builder.toString()}));
     }
 
     @Test
@@ -206,7 +206,7 @@ public class SolutionTest {
                     .append(" ")
                     .append(i + 1)
                     .append(" ")
-                    .append(1000);
+                    .append(10000);
             builder.append(" ")
                     .append(i)
                     .append(" ")
@@ -214,12 +214,12 @@ public class SolutionTest {
                     .append(" ")
                     .append(1);
         }
-        builder.append(" 999 1000 1000 ");
-        builder.append(" 999 1 1000 ");
-        builder.append(" 1000 2 1000 ");
-        builder.append(" 1 1000 1000 ");
+        builder.append(" 999 1000 10000 ");
+        builder.append(" 999 1 10000 ");
+        builder.append(" 1000 2 10000 ");
+        builder.append(" 1 1000 10000 ");
 
-        assertEquals(1008, Solution.main(new String[]{builder.toString()}));
+        assertEquals(10008, Solution.main(new String[]{builder.toString()}));
     }
 
     // region test bit mask operations
