@@ -206,7 +206,7 @@ class Solution {
     }
 
     private int[] mergeState(int[] state1, int shop2, int roadWeight) {
-        int[] newStateAfterMerge = new int[2];
+        int[] newStateAfterMerge = new int [2];
         // compute new bit mask
         int bitMaskAfterMergeState = state1[0] | shopFishTypes[shop2];
         // compute new weight
