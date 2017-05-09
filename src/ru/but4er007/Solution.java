@@ -3,6 +3,8 @@ package ru.but4er007;
 import java.util.*;
 
 class Solution {
+    private static long startTime;
+
     private final int shopsCount;
     private final int roadsCount;
     private final int fishTypes;
@@ -25,6 +27,8 @@ class Solution {
     }
 
     static int main(String[] args) {
+        startTime = System.currentTimeMillis();
+        checkTime("start");
         final int shopsCount;
         final int roadsCount;
         final int fishTypes;
@@ -62,6 +66,7 @@ class Solution {
 
         int shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
         System.out.println(shorterWayForTwoCats);
+        checkTime("stop");
         return shorterWayForTwoCats;
     }
 
@@ -209,5 +214,9 @@ class Solution {
         if ((mask1 | mask2) == mask2) return -1;
         if ((mask1 | mask2) == mask1) return 1;
         return 0;
+    }
+
+    private static void checkTime(String tag){
+        System.out.println((System.currentTimeMillis() - startTime) +" "+tag);
     }
 }
