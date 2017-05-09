@@ -226,26 +226,26 @@ public class SolutionTest {
     @Test
     public void testBitMaskPutType() {
         Solution solution = new Solution(0, 0, 0, null, null);
-        long mask = 0;
-        mask = solution.setBitMaskType(mask, 0);
+        int mask = 0;
+        mask = Solution.setBitMaskType(mask, 0);
         assertEquals(1, mask);
 
         mask = 0;
-        mask = solution.setBitMaskType(mask, 4);
+        mask = Solution.setBitMaskType(mask, 4);
         assertEquals(16, mask);
 
         mask = 0;
-        mask = solution.setBitMaskType(mask, 1);
+        mask = Solution.setBitMaskType(mask, 1);
         assertEquals(2, mask);
 
         mask = 0;
-        mask = solution.setBitMaskType(mask, 10);
+        mask = Solution.setBitMaskType(mask, 10);
         assertEquals(1024, mask);
 
         mask = 0;
-        mask = solution.setBitMaskType(mask, 1);
-        mask = solution.setBitMaskType(mask, 4);
-        mask = solution.setBitMaskType(mask, 5);
+        mask = Solution.setBitMaskType(mask, 1);
+        mask = Solution.setBitMaskType(mask, 4);
+        mask = Solution.setBitMaskType(mask, 5);
         assertEquals(50, mask);
     }
 
