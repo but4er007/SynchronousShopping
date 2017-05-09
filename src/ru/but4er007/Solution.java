@@ -228,13 +228,13 @@ public class Solution {
 
         InputParamsReader(String[] args) {
             this.args = args;
-            if (args == null) {
+            if (args == null || args.length == 0) {
                 scanner = new Scanner(System.in);
             }
         }
 
         int nextInt() {
-            if (args == null) {
+            if (args == null || args.length == 0) {
                 return scanner.nextInt();
             } else {
                 return Integer.valueOf(args[readCount++]);
