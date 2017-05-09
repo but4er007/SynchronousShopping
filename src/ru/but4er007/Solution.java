@@ -24,7 +24,7 @@ class Solution {
         this.shopFishTypes = shopFishTypes;
     }
 
-    static int main(String[] args) {
+    public static int main(String[] args) {
         final int shopsCount;
         final int roadsCount;
         final int fishTypes;
