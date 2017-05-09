@@ -186,10 +186,6 @@ class Solution {
         for (int fishType : shopFishTypes[city2]) {
             bitMaskAfterMergeState = setBitMaskType(bitMaskAfterMergeState, fishType);
         }
-        if (city2 == shopsCount - 1) {
-            // set flag being at last shop
-            bitMaskAfterMergeState = setBitMaskLast(bitMaskAfterMergeState);
-        }
         // compute new weight
         long wayWeightAfterMerge = state1[1] + roadWeight;
 
@@ -203,16 +199,8 @@ class Solution {
         return mask | (1 << type);
     }
 
-    long setBitMaskLast(long mask) {
-        return mask | (1 << fishTypes);
-    }
-
-    boolean getBeingLast(long mask) {
-        return (mask & (1 << fishTypes)) != 0;
-    }
-
     boolean checkMaskFullFilled(long mask) {
-        for (int i = 0; i <= fishTypes; i++) {
+        for (int i = 0; i < fishTypes; i++) {
             if ((mask & (1 << i)) == 0) return false;
         }
         return true;

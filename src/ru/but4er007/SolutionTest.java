@@ -214,16 +214,6 @@ public class SolutionTest {
     }
 
     @Test
-    public void testBitMaskLastBeing() {
-        Solution solution = new Solution(10, 0, 10, null, null);
-        long mask = 0;
-        mask = solution.setBitMaskLast(mask);
-        assertEquals(1024, mask);
-
-        assertEquals(true, solution.getBeingLast(mask));
-    }
-
-    @Test
     public void testBitMaskCompare() {
         Solution solution = new Solution(0, 0, 0, null, null);
         assertEquals(0, solution.compareBitMasks(0b110011, 0b001100));
@@ -236,10 +226,9 @@ public class SolutionTest {
     public void testCheckBitMaskFilled() {
         Solution solution = new Solution(5, 0, 5, null, null);
         assertEquals(false, solution.checkMaskFullFilled(0b00000));
-        assertEquals(false, solution.checkMaskFullFilled(0b11111));
-        assertEquals(true, solution.checkMaskFullFilled(0b111111));
-        assertEquals(false, solution.checkMaskFullFilled(0b101111));
-        assertEquals(false, solution.checkMaskFullFilled(0b111110));
+        assertEquals(true, solution.checkMaskFullFilled(0b11111));
+        assertEquals(false, solution.checkMaskFullFilled(0b01111));
+        assertEquals(false, solution.checkMaskFullFilled(0b11110));
     }
     // endregion
 
