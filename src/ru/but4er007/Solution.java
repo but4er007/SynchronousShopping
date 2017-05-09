@@ -31,9 +31,7 @@ class Solution {
         this.shopStateUpdatedCachedFlags = new boolean[shopsCount];
     }
 
-    static int main(String[] args) {
-        startTime = System.currentTimeMillis();
-        checkTime("start");
+    public static int main(String[] args) {
         final int shopsCount;
         final int roadsCount;
         final int fishTypes;
@@ -69,40 +67,21 @@ class Solution {
         Solution solution = new Solution(shopsCount, roadsCount, fishTypes, shopFishTypes, roads);
         solution.processWays();
 
-        int[][] shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
-        int shorterWayWeight = solution.minWayAlreadyFounded;
-        if (shorterWayForTwoCats != null) {
-            String delimiter = " -> ";
-            int wayNum = 1;
-            for (int[] wayState :
-                    shorterWayForTwoCats) {
-                String separator = "";
-                System.out.println();
-                System.out.print("Way" + wayNum++ + ": ");
-                for (int i = 2; i < wayState.length; i++) {
-                    int shopNum = wayState[i];
-                    System.out.print(separator + (shopNum + 1));
-                    separator = delimiter;
-                }
-            }
-            System.out.println();
-            System.out.println("Shorter way weight: " + shorterWayWeight);
-        } else {
-            System.out.println("error");
-        }
-        return shorterWayWeight;
+        int shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
+        System.out.println(shorterWayForTwoCats);
+        return shorterWayForTwoCats;
     }
 
     // find shorter way for get all types of fish by single cat
     private void processWays() {
         // **** init algorithm
         foundedStates = new int[shopsCount][][];
-        foundedStates[0] = new int[1][3];
+        foundedStates[0] = new int[1][2];
         int firstShopBitMask = shopFishTypes[0];
+
         // init first shop state
         foundedStates[0][0][0] = firstShopBitMask;  // have all fish types from first shop
         foundedStates[0][0][1] = 0;                // way weight = 0
-        foundedStates[0][0][2] = 0;                // way contain only first shop
         shopStateUpdatedFlags[0] = true;
         // *****
 
@@ -123,16 +102,15 @@ class Solution {
                 }
             }
             if (shopStateUpdatedFlags[shopsCount - 1]) {
-                findFastestWayFoTwoCats();
+                minWayAlreadyFounded = findFastestWayFoTwoCats();
             }
             shopStateUpdatedCachedFlags = shopStateUpdatedFlags;
             shopStateUpdatedFlags = new boolean[shopsCount];
         } while (updated);
     }
 
-    private int[][] findFastestWayFoTwoCats() {
+    private int findFastestWayFoTwoCats() {
         int shorterWayWeight = -1;
-        int[][] shorterWayStates = new int[2][];
 
         int[][] statesForLastShop = foundedStates[shopsCount - 1];
         for (int[] foundedState1 : statesForLastShop) {
@@ -140,13 +118,10 @@ class Solution {
                 if (checkMaskFullFilled(foundedState1[0] | foundedState2[0])
                         && (Math.max(foundedState1[1], foundedState2[1]) < shorterWayWeight || shorterWayWeight < 0)) {
                     shorterWayWeight = Math.max(foundedState1[1], foundedState2[1]);
-                    shorterWayStates[0] = foundedState1;
-                    shorterWayStates[1] = foundedState2;
                 }
             }
         }
-        minWayAlreadyFounded = shorterWayWeight;
-        return shorterWayStates;
+        return shorterWayWeight;
     }
 
     // update states for shop2 by merging states from shop1 if they better
@@ -160,7 +135,7 @@ class Solution {
         boolean updated = false;
 
         for (int[] state1 : states1) {
-            if (minWayAlreadyFounded > 0
+            if(minWayAlreadyFounded > 0
                     && state1[1] > minWayAlreadyFounded) {
                 continue;
             }
@@ -171,7 +146,7 @@ class Solution {
 
             int[] newMergedState = mergeState(state1, shop2, weight);
 
-            if (minWayAlreadyFounded > 0
+            if(minWayAlreadyFounded > 0
                     && newMergedState[1] > minWayAlreadyFounded) {
                 continue;
             }
@@ -231,7 +206,7 @@ class Solution {
     }
 
     private int[] mergeState(int[] state1, int shop2, int roadWeight) {
-        int[] newStateAfterMerge = Arrays.copyOf(state1, state1.length + 1);
+        int[] newStateAfterMerge = new int [2];
         // compute new bit mask
         int bitMaskAfterMergeState = state1[0] | shopFishTypes[shop2];
         // compute new weight
@@ -239,7 +214,6 @@ class Solution {
 
         newStateAfterMerge[0] = bitMaskAfterMergeState;
         newStateAfterMerge[1] = wayWeightAfterMerge;
-        newStateAfterMerge[newStateAfterMerge.length - 1] = shop2;
         return newStateAfterMerge;
     }
 
@@ -262,9 +236,5 @@ class Solution {
         if ((mask1 | mask2) == mask2) return -1;
         if ((mask1 | mask2) == mask1) return 1;
         return 0;
-    }
-
-    private static void checkTime(String tag) {
-        System.out.println((System.currentTimeMillis() - startTime) + " " + tag);
     }
 }
