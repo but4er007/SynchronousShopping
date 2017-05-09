@@ -59,27 +59,8 @@ class Solution {
         Solution solution = new Solution(shopsCount, roadsCount, fishTypes, shopFishTypes, roads);
         solution.processWays();
 
-        long[] shorterWay = solution.findFastestWayForSingleCat();
-        if (shorterWay != null) {
-            String separator = "";
-            String delimiter = " -> ";
-            System.out.print("Way: ");
-            for (int i = 2; i < shorterWay.length; i++) {
-                long shopNum = shorterWay[i];
-                System.out.print(separator + (shopNum + 1));
-                separator = delimiter;
-            }
-            System.out.println();
-            System.out.println("Shorter way weight: " + shorterWay[1]);
-        } else {
-            System.out.println("error");
-        }
-
-        System.out.println();
-        System.out.println();
-
         long[][] shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
-        if (shorterWay != null) {
+        if (shorterWayForTwoCats != null) {
             String delimiter = " -> ";
             for (long[] wayState :
                     shorterWayForTwoCats) {
@@ -132,21 +113,6 @@ class Solution {
                 }
             }
         } while (updated);
-    }
-
-    private long[] findFastestWayForSingleCat() {
-        long shorterWayWeight = -1;
-        long[] shorterWay = null;
-        for (long[][] foundedState : foundedStates) {
-            for (long[] state : foundedState) {
-                if (checkMaskFullFilled(state[0])
-                        && (state[1] < shorterWayWeight || shorterWayWeight < 0)) {
-                    shorterWayWeight = state[1];
-                    shorterWay = state;
-                }
-            }
-        }
-        return shorterWay;
     }
 
     private long[][] findFastestWayFoTwoCats() {
