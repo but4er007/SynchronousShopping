@@ -186,6 +186,42 @@ public class SolutionTest {
         assertEquals(9000, Solution.main(new String[]{builder.toString()}));
     }
 
+    @Test
+    public void longCircleWithBigRoadCostMoreRoads() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("1000 2000 10 ");
+
+        // fill types
+        int currentType = 1;
+        for (int i = 1; i <= 1000; i++) {
+            builder.append(" 1 ")
+                    .append(currentType);
+            currentType = (currentType) % 10 + 1;
+        }
+
+        // fill roads
+        for (int i = 1; i < 999; i++) {
+            builder.append(" ")
+                    .append(i)
+                    .append(" ")
+                    .append(i + 1)
+                    .append(" ")
+                    .append(1000);
+            builder.append(" ")
+                    .append(i)
+                    .append(" ")
+                    .append(i + 2)
+                    .append(" ")
+                    .append(1);
+        }
+        builder.append(" 999 1000 1000 ");
+        builder.append(" 999 1 1000 ");
+        builder.append(" 1000 2 1000 ");
+        builder.append(" 1 1000 1000 ");
+
+        assertEquals(1008, Solution.main(new String[]{builder.toString()}));
+    }
+
     // region test bit mask operations
     @Test
     public void testBitMaskPutType() {
@@ -214,16 +250,6 @@ public class SolutionTest {
     }
 
     @Test
-    public void testBitMaskLastBeing() {
-        Solution solution = new Solution(10, 0, 10, null, null);
-        long mask = 0;
-        mask = solution.setBitMaskLast(mask);
-        assertEquals(1024, mask);
-
-        assertEquals(true, solution.getBeingLast(mask));
-    }
-
-    @Test
     public void testBitMaskCompare() {
         Solution solution = new Solution(0, 0, 0, null, null);
         assertEquals(0, solution.compareBitMasks(0b110011, 0b001100));
@@ -236,10 +262,9 @@ public class SolutionTest {
     public void testCheckBitMaskFilled() {
         Solution solution = new Solution(5, 0, 5, null, null);
         assertEquals(false, solution.checkMaskFullFilled(0b00000));
-        assertEquals(false, solution.checkMaskFullFilled(0b11111));
-        assertEquals(true, solution.checkMaskFullFilled(0b111111));
-        assertEquals(false, solution.checkMaskFullFilled(0b101111));
-        assertEquals(false, solution.checkMaskFullFilled(0b111110));
+        assertEquals(true, solution.checkMaskFullFilled(0b11111));
+        assertEquals(false, solution.checkMaskFullFilled(0b01111));
+        assertEquals(false, solution.checkMaskFullFilled(0b11110));
     }
     // endregion
 

@@ -59,37 +59,16 @@ class Solution {
         Solution solution = new Solution(shopsCount, roadsCount, fishTypes, shopFishTypes, roads);
         solution.processWays();
 
-        long[][] shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
-        if (shorterWayForTwoCats != null) {
-            String delimiter = " -> ";
-            for (long[] wayState :
-                    shorterWayForTwoCats) {
-                String separator = "";
-                System.out.println();
-                System.out.print("Way: ");
-                for (int i = 2; i < wayState.length; i++) {
-                    long shopNum = wayState[i];
-                    System.out.print(separator + (shopNum + 1));
-                    separator = delimiter;
-                }
-            }
-            System.out.println();
-            System.out.println("Shorter way weight: "
-                    + Math.max(shorterWayForTwoCats[0][1], shorterWayForTwoCats[1][1]));
-
-            return Math.max(shorterWayForTwoCats[0][1], shorterWayForTwoCats[1][1]);
-        } else {
-            System.out.println("error");
-        }
-
-        return -1;
+        long shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
+        System.out.println(shorterWayForTwoCats);
+        return shorterWayForTwoCats;
     }
 
     // find shorter way for get all types of fish by single cat
     private void processWays() {
         // **** init algorithm
         foundedStates = new long[shopsCount][][];
-        foundedStates[0] = new long[1][3];
+        foundedStates[0] = new long[1][2];
         long firstShopBitMask = 0;
         for (int i = 0; i < shopFishTypes[0].length; i++) {
             firstShopBitMask = setBitMaskType(firstShopBitMask, shopFishTypes[0][i]);
@@ -97,7 +76,6 @@ class Solution {
         // init first shop state
         foundedStates[0][0][0] = firstShopBitMask;  // have all fish types from first shop
         foundedStates[0][0][1] = 0L;                // way weight = 0
-        foundedStates[0][0][2] = 0L;                // way contain only first shop
         // *****
 
         boolean updated;
@@ -115,9 +93,8 @@ class Solution {
         } while (updated);
     }
 
-    private long[][] findFastestWayFoTwoCats() {
+    private long findFastestWayFoTwoCats() {
         long shorterWayWeight = -1;
-        long[][] shorterWayStates = new long[2][];
 
         long[][] statesForLastShop = foundedStates[shopsCount - 1];
         for (long[] foundedState1 : statesForLastShop) {
@@ -125,12 +102,10 @@ class Solution {
                 if (checkMaskFullFilled(foundedState1[0] | foundedState2[0])
                         && (Math.max(foundedState1[1], foundedState2[1]) < shorterWayWeight || shorterWayWeight < 0)) {
                     shorterWayWeight = Math.max(foundedState1[1], foundedState2[1]);
-                    shorterWayStates[0] = foundedState1;
-                    shorterWayStates[1] = foundedState2;
                 }
             }
         }
-        return shorterWayStates;
+        return shorterWayWeight;
     }
 
     // update states for shop2 by merging states from shop1 if they better
@@ -205,22 +180,17 @@ class Solution {
     }
 
     private long[] mergeState(long[] state1, int city2, int roadWeight) {
-        long[] newStateAfterMerge = Arrays.copyOf(state1, state1.length + 1);
+        long[] newStateAfterMerge = new long[2];
         // compute new bit mask
         long bitMaskAfterMergeState = state1[0];
         for (int fishType : shopFishTypes[city2]) {
             bitMaskAfterMergeState = setBitMaskType(bitMaskAfterMergeState, fishType);
-        }
-        if (city2 == shopsCount - 1) {
-            // set flag being at last shop
-            bitMaskAfterMergeState = setBitMaskLast(bitMaskAfterMergeState);
         }
         // compute new weight
         long wayWeightAfterMerge = state1[1] + roadWeight;
 
         newStateAfterMerge[0] = bitMaskAfterMergeState;
         newStateAfterMerge[1] = wayWeightAfterMerge;
-        newStateAfterMerge[newStateAfterMerge.length - 1] = city2;
         return newStateAfterMerge;
     }
 
@@ -229,16 +199,8 @@ class Solution {
         return mask | (1 << type);
     }
 
-    long setBitMaskLast(long mask) {
-        return mask | (1 << fishTypes);
-    }
-
-    boolean getBeingLast(long mask) {
-        return (mask & (1 << fishTypes)) != 0;
-    }
-
     boolean checkMaskFullFilled(long mask) {
-        for (int i = 0; i <= fishTypes; i++) {
+        for (int i = 0; i < fishTypes; i++) {
             if ((mask & (1 << i)) == 0) return false;
         }
         return true;
