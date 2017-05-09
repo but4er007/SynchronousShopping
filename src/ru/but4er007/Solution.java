@@ -143,8 +143,9 @@ class Solution {
                             states2ToRemove.add(j);
                             statesToRemoveCount++;
                         }
-                    } else if (comparing == -1) { // masks different
-                        needToAddMergedState = false;
+                    } else if (comparing == -1) { // mask worth
+                        if(newMergedState[1] >= states2.get(j)[1])
+                            needToAddMergedState = false;
                     }
                 }
             }
