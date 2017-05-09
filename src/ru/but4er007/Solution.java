@@ -13,6 +13,9 @@ class Solution {
 
     // cities, states, { BitMask, Way weight, Way shops }
     private int[][][] foundedStates;
+    private boolean[] shopStateUpdatedFlags;
+    private boolean[] shopStateUpdatedCachedFlags;
+    private int minWayAlreadyFounded = -1;
 
     Solution(int shopsCount,
              int roadsCount,
@@ -24,6 +27,8 @@ class Solution {
         this.roadsCount = roadsCount;
         this.fishTypes = fishTypes;
         this.shopFishTypes = shopFishTypes;
+        this.shopStateUpdatedFlags = new boolean[shopsCount];
+        this.shopStateUpdatedCachedFlags = new boolean[shopsCount];
     }
 
     static int main(String[] args) {
@@ -80,6 +85,7 @@ class Solution {
         // init first shop state
         foundedStates[0][0][0] = firstShopBitMask;  // have all fish types from first shop
         foundedStates[0][0][1] = 0;                // way weight = 0
+        shopStateUpdatedFlags[0] = true;
         // *****
 
         boolean updated;
@@ -87,13 +93,22 @@ class Solution {
             updated = false;
             for (int i = 0; i < roadsCount; i++) {
                 int road[] = roads[i];
-                if (foundedStates[road[0]] != null && foundedStates[road[0]].length > 0) {
+                if ((shopStateUpdatedFlags[road[0]] || shopStateUpdatedCachedFlags[road[0]])
+                        && foundedStates[road[0]] != null
+                        && foundedStates[road[0]].length > 0) {
                     updated = updateRelatedRoad(road[0], road[1], road[2]) || updated;
                 }
-                if (foundedStates[road[1]] != null && foundedStates[road[1]].length > 0) {
+                if ((shopStateUpdatedFlags[road[1]] || shopStateUpdatedCachedFlags[road[1]])
+                        && foundedStates[road[1]] != null
+                        && foundedStates[road[1]].length > 0) {
                     updated = updateRelatedRoad(road[1], road[0], road[2]) || updated;
                 }
             }
+            if (shopStateUpdatedFlags[shopsCount - 1]) {
+                minWayAlreadyFounded = findFastestWayFoTwoCats();
+            }
+            shopStateUpdatedCachedFlags = shopStateUpdatedFlags;
+            shopStateUpdatedFlags = new boolean[shopsCount];
         } while (updated);
     }
 
@@ -123,12 +138,21 @@ class Solution {
         boolean updated = false;
 
         for (int[] state1 : states1) {
+            if(minWayAlreadyFounded > 0
+                    && state1[1] > minWayAlreadyFounded) {
+                continue;
+            }
 
             boolean needToAddMergedState = true;
             HashSet<Integer> states2ToRemove = new HashSet<>();
             int statesToRemoveCount = 0;
 
             int[] newMergedState = mergeState(state1, shop2, weight);
+
+            if(minWayAlreadyFounded > 0
+                    && newMergedState[1] > minWayAlreadyFounded) {
+                continue;
+            }
 
             // find more optimized state
             for (int j = 0; j < states2.size(); j++) {
@@ -148,7 +172,7 @@ class Solution {
                             statesToRemoveCount++;
                         }
                     } else if (comparing == -1) { // mask worth
-                        if(newMergedState[1] >= states2.get(j)[1])
+                        if (newMergedState[1] >= states2.get(j)[1])
                             needToAddMergedState = false;
                     }
                 }
@@ -180,6 +204,7 @@ class Solution {
 //        }
 
         foundedStates[shop2] = states2.toArray(updatedStates2);
+        shopStateUpdatedFlags[shop2] = updated || shopStateUpdatedFlags[shop2];
         return updated;
     }
 
@@ -216,7 +241,7 @@ class Solution {
         return 0;
     }
 
-    private static void checkTime(String tag){
-        System.out.println((System.currentTimeMillis() - startTime) +" "+tag);
+    private static void checkTime(String tag) {
+        System.out.println((System.currentTimeMillis() - startTime) + " " + tag);
     }
 }
