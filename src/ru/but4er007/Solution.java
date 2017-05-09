@@ -6,16 +6,16 @@ class Solution {
     private final int shopsCount;
     private final int roadsCount;
     private final int fishTypes;
-    private final int shopFishTypes[][];
+    private final int shopFishTypes[];
     private final int roads[][];
 
     // cities, states, { BitMask, Way weight, Way shops }
-    private long[][][] foundedStates;
+    private int[][][] foundedStates;
 
     Solution(int shopsCount,
              int roadsCount,
              int fishTypes,
-             int[][] shopFishTypes,
+             int[] shopFishTypes,
              int[][] roads) {
         this.shopsCount = shopsCount;
         this.roads = roads;
@@ -24,11 +24,11 @@ class Solution {
         this.shopFishTypes = shopFishTypes;
     }
 
-    static long main(String[] args) {
+    static int main(String[] args) {
         final int shopsCount;
         final int roadsCount;
         final int fishTypes;
-        final int shopFishTypes[][];
+        final int shopFishTypes[];
         final int roads[][];
 
         Scanner in;
@@ -39,27 +39,28 @@ class Solution {
         shopsCount = in.nextInt();
         roadsCount = in.nextInt();
         fishTypes = in.nextInt();
-        shopFishTypes = new int[shopsCount][];
+        shopFishTypes = new int[shopsCount];
         roads = new int[roadsCount][3];
         // read shop fish types
         for (int i = 0; i < shopsCount; i++) {
             int shopTypesCount = in.nextInt();
-            shopFishTypes[i] = new int[shopTypesCount];
+            int typeMask = 0;
             for (int j = 0; j < shopTypesCount; j++) {
-                shopFishTypes[i][j] = in.nextInt() - 1;
+                typeMask = setBitMaskType(typeMask, in.nextInt() - 1);
             }
+            shopFishTypes[i] = typeMask;
         }
         // read roads
         for (int i = 0; i < roadsCount; i++) {
-            roads[i][0] = in.nextInt() - 1; // 1st city
-            roads[i][1] = in.nextInt() - 1; // 2nd city
+            roads[i][0] = in.nextInt() - 1; // 1st shop
+            roads[i][1] = in.nextInt() - 1; // 2nd shop
             roads[i][2] = in.nextInt(); // road length
         }
 
         Solution solution = new Solution(shopsCount, roadsCount, fishTypes, shopFishTypes, roads);
         solution.processWays();
 
-        long shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
+        int shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
         System.out.println(shorterWayForTwoCats);
         return shorterWayForTwoCats;
     }
@@ -67,15 +68,13 @@ class Solution {
     // find shorter way for get all types of fish by single cat
     private void processWays() {
         // **** init algorithm
-        foundedStates = new long[shopsCount][][];
-        foundedStates[0] = new long[1][2];
-        long firstShopBitMask = 0;
-        for (int i = 0; i < shopFishTypes[0].length; i++) {
-            firstShopBitMask = setBitMaskType(firstShopBitMask, shopFishTypes[0][i]);
-        }
+        foundedStates = new int[shopsCount][][];
+        foundedStates[0] = new int[1][2];
+        int firstShopBitMask = shopFishTypes[0];
+
         // init first shop state
         foundedStates[0][0][0] = firstShopBitMask;  // have all fish types from first shop
-        foundedStates[0][0][1] = 0L;                // way weight = 0
+        foundedStates[0][0][1] = 0;                // way weight = 0
         // *****
 
         boolean updated;
@@ -93,12 +92,12 @@ class Solution {
         } while (updated);
     }
 
-    private long findFastestWayFoTwoCats() {
-        long shorterWayWeight = -1;
+    private int findFastestWayFoTwoCats() {
+        int shorterWayWeight = -1;
 
-        long[][] statesForLastShop = foundedStates[shopsCount - 1];
-        for (long[] foundedState1 : statesForLastShop) {
-            for (long[] foundedState2 : statesForLastShop) {
+        int[][] statesForLastShop = foundedStates[shopsCount - 1];
+        for (int[] foundedState1 : statesForLastShop) {
+            for (int[] foundedState2 : statesForLastShop) {
                 if (checkMaskFullFilled(foundedState1[0] | foundedState2[0])
                         && (Math.max(foundedState1[1], foundedState2[1]) < shorterWayWeight || shorterWayWeight < 0)) {
                     shorterWayWeight = Math.max(foundedState1[1], foundedState2[1]);
@@ -110,21 +109,21 @@ class Solution {
 
     // update states for shop2 by merging states from shop1 if they better
     private boolean updateRelatedRoad(int shop1, int shop2, int weight) {
-        long[][] states1 = foundedStates[shop1];
-        List<long[]> states2 = new LinkedList<>();
-        long[][] states2Temp = foundedStates[shop2];
+        int[][] states1 = foundedStates[shop1];
+        List<int[]> states2 = new LinkedList<>();
+        int[][] states2Temp = foundedStates[shop2];
         if (states2Temp != null) {
             states2.addAll(Arrays.asList(states2Temp));
         }
         boolean updated = false;
 
-        for (long[] state1 : states1) {
+        for (int[] state1 : states1) {
 
             boolean needToAddMergedState = true;
             HashSet<Integer> states2ToRemove = new HashSet<>();
             int statesToRemoveCount = 0;
 
-            long[] newMergedState = mergeState(state1, shop2, weight);
+            int[] newMergedState = mergeState(state1, shop2, weight);
 
             // find more optimized state
             for (int j = 0; j < states2.size(); j++) {
@@ -170,24 +169,21 @@ class Solution {
             }
         }
 
-        long[][] updatedStates2 = new long[states2.size()][];
+        int[][] updatedStates2 = new int[states2.size()][];
 //        for (int i = 0; i < updatedStates2.length; i++) {
-//            updatedStates2[i] = new long[states2.get(i).length];
+//            updatedStates2[i] = new int[states2.get(i).length];
 //        }
 
         foundedStates[shop2] = states2.toArray(updatedStates2);
         return updated;
     }
 
-    private long[] mergeState(long[] state1, int city2, int roadWeight) {
-        long[] newStateAfterMerge = new long[2];
+    private int[] mergeState(int[] state1, int shop2, int roadWeight) {
+        int[] newStateAfterMerge = new int[2];
         // compute new bit mask
-        long bitMaskAfterMergeState = state1[0];
-        for (int fishType : shopFishTypes[city2]) {
-            bitMaskAfterMergeState = setBitMaskType(bitMaskAfterMergeState, fishType);
-        }
+        int bitMaskAfterMergeState = state1[0] | shopFishTypes[shop2];
         // compute new weight
-        long wayWeightAfterMerge = state1[1] + roadWeight;
+        int wayWeightAfterMerge = state1[1] + roadWeight;
 
         newStateAfterMerge[0] = bitMaskAfterMergeState;
         newStateAfterMerge[1] = wayWeightAfterMerge;
@@ -195,11 +191,11 @@ class Solution {
     }
 
     // fishTypes > type >=0
-    long setBitMaskType(long mask, int type) {
+    static int setBitMaskType(int mask, int type) {
         return mask | (1 << type);
     }
 
-    boolean checkMaskFullFilled(long mask) {
+    boolean checkMaskFullFilled(int mask) {
         for (int i = 0; i < fishTypes; i++) {
             if ((mask & (1 << i)) == 0) return false;
         }
@@ -209,7 +205,7 @@ class Solution {
     // return 1 if mask1 better
     // return -1 if mask1 worth or equal
     // return 0 if masks different
-    int compareBitMasks(long mask1, long mask2) {
+    int compareBitMasks(int mask1, int mask2) {
         if ((mask1 | mask2) == mask2) return -1;
         if ((mask1 | mask2) == mask1) return 1;
         return 0;
