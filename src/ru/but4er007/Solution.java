@@ -163,7 +163,7 @@ class Solution {
             Iterator iter = states2.iterator();
             while (iter.hasNext()) {
                 int[] state2 = (int[]) iter.next();
-                if(minWayAlreadyFounded > 0
+                if (minWayAlreadyFounded > 0
                         && state2[1] > minWayAlreadyFounded) {
                     iter.remove();
                     continue;

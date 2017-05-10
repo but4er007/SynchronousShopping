@@ -259,16 +259,16 @@ public class SolutionTest {
                         .append(" ")
                         .append(i + j + level)
                         .append(" ")
-                        .append(5000 + level*100 + i + j)
+                        .append(5000 + level * 100 + i + j)
                         .append("\n")
                         .append(" ")
                         .append(i + j)
                         .append(" ")
                         .append(i + j + level + 1)
                         .append(" ")
-                        .append(5000 + level*100 + i + j);
+                        .append(5000 + level * 100 + i + j);
             }
-            i+=level;
+            i += level;
         }
         level = 1;
         for (int i = N; level < A; level++) {
@@ -279,16 +279,16 @@ public class SolutionTest {
                         .append(" ")
                         .append(i - j - level)
                         .append(" ")
-                        .append(5000 + level*100 + i + j)
+                        .append(5000 + level * 100 + i + j)
                         .append("\n")
                         .append(" ")
                         .append(i - j)
                         .append(" ")
                         .append(i - j - level - 1)
                         .append(" ")
-                        .append(5000 + level*100 + i + j);
+                        .append(5000 + level * 100 + i + j);
             }
-            i-=level;
+            i -= level;
         }
 
         Solution.main(new String[]{builder.toString()});
@@ -338,7 +338,7 @@ public class SolutionTest {
                         .append(" ")
                         .append(5000);
             }
-            i+=level;
+            i += level;
         }
         level = 1;
         for (int i = N; level < A; level++) {
@@ -358,7 +358,7 @@ public class SolutionTest {
                         .append(" ")
                         .append(5000);
             }
-            i-=level;
+            i -= level;
         }
 
         Solution.main(new String[]{builder.toString()});
