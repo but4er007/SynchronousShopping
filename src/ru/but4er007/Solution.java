@@ -3,8 +3,6 @@ package ru.but4er007;
 import java.util.*;
 
 class Solution {
-    private static long startTime;
-
     private final int shopsCount;
     private final int roadsCount;
     private final int fishTypes;
@@ -115,9 +113,11 @@ class Solution {
         int[][] statesForLastShop = foundedStates[shopsCount - 1];
         for (int[] foundedState1 : statesForLastShop) {
             for (int[] foundedState2 : statesForLastShop) {
+                int maxWay;
                 if (checkMaskFullFilled(foundedState1[0] | foundedState2[0])
-                        && (Math.max(foundedState1[1], foundedState2[1]) < shorterWayWeight || shorterWayWeight < 0)) {
-                    shorterWayWeight = Math.max(foundedState1[1], foundedState2[1]);
+                        && (shorterWayWeight > (maxWay = Math.max(foundedState1[1], foundedState2[1]))
+                        || shorterWayWeight < 0)) {
+                    shorterWayWeight = maxWay;
                 }
             }
         }
