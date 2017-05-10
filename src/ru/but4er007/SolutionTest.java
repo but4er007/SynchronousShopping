@@ -224,6 +224,21 @@ public class SolutionTest {
         assertEquals(10008, Solution.main(new String[]{builder.toString()}));
     }
 
+
+    //
+//           1
+//          /\
+//         2  3
+//       /  \/ \
+//      4   5  6
+//     /\  /\ / \
+//    7  8   9  10
+//    \/  \/  \/
+//    11  12  13
+//      \/ \/
+//      14 15
+//        \/
+//        16
     @Test
     public void testRombGraph() {
         int A = 31;
