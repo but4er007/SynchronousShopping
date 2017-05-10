@@ -2,6 +2,8 @@ package ru.but4er007;
 
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.assertEquals;
 
 public class SolutionTest {
@@ -220,6 +222,146 @@ public class SolutionTest {
         builder.append(" 1 1000 10000 ");
 
         assertEquals(10008, Solution.main(new String[]{builder.toString()}));
+    }
+
+    @Test
+    public void testRombGraph() {
+        int A = 31;
+        int N = A * A;
+        int M = (A - 1) * A * 2;
+        int L = 2 * A - 1;
+        Random r = new Random();
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(N).append(" ")
+                .append(M).append(" ")
+                .append("10 ");
+
+        // fill types
+        int currentType = 1;
+        for (int i = 1; i <= N; i++) {
+            if (i % 70 == 0) {
+                builder.append("\n 1 ")
+                        .append(currentType);
+                currentType = (currentType) % 10 + 1;
+            } else {
+                builder.append("\n 0 ");
+            }
+        }
+
+        // fill roads
+        int level = 1;
+        for (int i = 1; level < A; level++) {
+            for (int j = 0; j < level; j++) {
+                builder.append("\n")
+                        .append(" ")
+                        .append(i + j)
+                        .append(" ")
+                        .append(i + j + level)
+                        .append(" ")
+                        .append(5000 + level*100 + i + j)
+                        .append("\n")
+                        .append(" ")
+                        .append(i + j)
+                        .append(" ")
+                        .append(i + j + level + 1)
+                        .append(" ")
+                        .append(5000 + level*100 + i + j);
+            }
+            i+=level;
+        }
+        level = 1;
+        for (int i = N; level < A; level++) {
+            for (int j = 0; j < level; j++) {
+                builder.append("\n")
+                        .append(" ")
+                        .append(i - j)
+                        .append(" ")
+                        .append(i - j - level)
+                        .append(" ")
+                        .append(5000 + level*100 + i + j)
+                        .append("\n")
+                        .append(" ")
+                        .append(i - j)
+                        .append(" ")
+                        .append(i - j - level - 1)
+                        .append(" ")
+                        .append(5000 + level*100 + i + j);
+            }
+            i-=level;
+        }
+
+        Solution.main(new String[]{builder.toString()});
+    }
+
+    @Test
+    public void testRombGraphEqualsWeight() {
+        int A = 31;
+        int N = A * A;
+        int M = (A - 1) * A * 2;
+        int L = 2 * A - 1;
+        Random r = new Random();
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(N).append(" ")
+                .append(M).append(" ")
+                .append("10 ");
+
+        // fill types
+        int currentType = 1;
+        for (int i = 1; i <= N; i++) {
+            if (r.nextInt() % 5 == 0) {
+                builder.append("\n 1 ")
+                        .append(currentType);
+                currentType = (currentType) % 10 + 1;
+            } else {
+                builder.append("\n 0 ");
+            }
+        }
+
+        // fill roads
+        int level = 1;
+        for (int i = 1; level < A; level++) {
+            for (int j = 0; j < level; j++) {
+                builder.append("\n")
+                        .append(" ")
+                        .append(i + j)
+                        .append(" ")
+                        .append(i + j + level)
+                        .append(" ")
+                        .append(5000)
+                        .append("\n")
+                        .append(" ")
+                        .append(i + j)
+                        .append(" ")
+                        .append(i + j + level + 1)
+                        .append(" ")
+                        .append(5000);
+            }
+            i+=level;
+        }
+        level = 1;
+        for (int i = N; level < A; level++) {
+            for (int j = 0; j < level; j++) {
+                builder.append("\n")
+                        .append(" ")
+                        .append(i - j)
+                        .append(" ")
+                        .append(i - j - level)
+                        .append(" ")
+                        .append(5000)
+                        .append("\n")
+                        .append(" ")
+                        .append(i - j)
+                        .append(" ")
+                        .append(i - j - level - 1)
+                        .append(" ")
+                        .append(5000);
+            }
+            i-=level;
+        }
+
+        Solution.main(new String[]{builder.toString()});
     }
 
     // region test bit mask operations

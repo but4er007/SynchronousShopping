@@ -44,6 +44,8 @@ class Solution {
         final int shopFishTypes[];
         final int roads[][];
 
+        long startTime = System.currentTimeMillis();
+
         Scanner in;
         if (args != null && args.length > 0)
             in = new Scanner(args[0]);
@@ -75,6 +77,7 @@ class Solution {
 
         int shorterWayForTwoCats = solution.findFastestWayFoTwoCats();
         System.out.println(shorterWayForTwoCats);
+        System.out.println("Working time: " + (System.currentTimeMillis() - startTime));
         return shorterWayForTwoCats;
     }
 
@@ -160,6 +163,11 @@ class Solution {
             Iterator iter = states2.iterator();
             while (iter.hasNext()) {
                 int[] state2 = (int[]) iter.next();
+                if(minWayAlreadyFounded > 0
+                        && state2[1] > minWayAlreadyFounded) {
+                    iter.remove();
+                    continue;
+                }
 
                 if (newMergedState[0] == state2[0]) { // bit masks equals
                     if (newMergedState[1] < state2[1]) {
