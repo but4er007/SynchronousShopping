@@ -5,7 +5,6 @@ import java.util.*;
 class Solution {
     private final int shopsCount;
     private final int roadsCount;
-    private final int fishTypes;
     private final int shopFishTypes[];
     private final int roads[][];
 
@@ -15,6 +14,8 @@ class Solution {
     private boolean[] shopStateUpdatedCachedFlags;
     private int minWayAlreadyFounded = -1;
 
+    private final long fullTypeMask;
+
     Solution(int shopsCount,
              int roadsCount,
              int fishTypes,
@@ -23,10 +24,14 @@ class Solution {
         this.shopsCount = shopsCount;
         this.roads = roads;
         this.roadsCount = roadsCount;
-        this.fishTypes = fishTypes;
         this.shopFishTypes = shopFishTypes;
         this.shopStateUpdatedFlags = new boolean[shopsCount];
         this.shopStateUpdatedCachedFlags = new boolean[shopsCount];
+        long fullTypeMask = 0;
+        for (int i = 0; i < fishTypes; i++) {
+            fullTypeMask = fullTypeMask | (1 << i);
+        }
+        this.fullTypeMask = fullTypeMask;
     }
 
     public static int main(String[] args) {
@@ -223,10 +228,7 @@ class Solution {
     }
 
     boolean checkMaskFullFilled(int mask) {
-        for (int i = 0; i < fishTypes; i++) {
-            if ((mask & (1 << i)) == 0) return false;
-        }
-        return true;
+        return mask == fullTypeMask;
     }
 
     // return 1 if mask1 better
