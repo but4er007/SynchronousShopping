@@ -229,8 +229,6 @@ public class SolutionTest {
         int A = 31;
         int N = A * A;
         int M = (A - 1) * A * 2;
-        int L = 2 * A - 1;
-        Random r = new Random();
 
         StringBuilder builder = new StringBuilder();
         builder.append(N).append(" ")
@@ -299,7 +297,6 @@ public class SolutionTest {
         int A = 31;
         int N = A * A;
         int M = (A - 1) * A * 2;
-        int L = 2 * A - 1;
         Random r = new Random();
 
         StringBuilder builder = new StringBuilder();
@@ -367,7 +364,6 @@ public class SolutionTest {
     // region test bit mask operations
     @Test
     public void testBitMaskPutType() {
-        Solution solution = new Solution(0, 0, 0, null, null);
         int mask = 0;
         mask = Solution.setBitMaskType(mask, 0);
         assertEquals(1, mask);
