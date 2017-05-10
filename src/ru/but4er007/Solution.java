@@ -1,6 +1,9 @@
 package ru.but4er007;
 
-import java.util.*;
+import java.lang.reflect.Array;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Scanner;
 
 class Solution {
     private final int shopsCount;
@@ -9,7 +12,7 @@ class Solution {
     private final int roads[][];
 
     // cities, states, { BitMask, Way weight, Way shops }
-    private int[][][] foundedStates;
+    private LinkedList<int[]>[] foundedStates;
     private boolean[] shopStateUpdatedFlags;
     private boolean[] shopStateUpdatedCachedFlags;
     private int minWayAlreadyFounded = -1;
@@ -78,13 +81,17 @@ class Solution {
     // find shorter way for get all types of fish by single cat
     private void processWays() {
         // **** init algorithm
-        foundedStates = new int[shopsCount][][];
-        foundedStates[0] = new int[1][2];
+        foundedStates = (LinkedList<int[]>[]) Array.newInstance(LinkedList.class, shopsCount);
+        for (int i = 0; i < shopsCount; i++) {
+            foundedStates[i] = new LinkedList<>();
+        }
         int firstShopBitMask = shopFishTypes[0];
 
         // init first shop state
-        foundedStates[0][0][0] = firstShopBitMask;  // have all fish types from first shop
-        foundedStates[0][0][1] = 0;                // way weight = 0
+        int[] state = new int[2];
+        state[0] = firstShopBitMask;  // have all fish types from first shop
+        state[1] = 0;                // way weight = 0
+        foundedStates[0].add(state);
         shopStateUpdatedFlags[0] = true;
         // *****
 
@@ -95,12 +102,12 @@ class Solution {
                 int road[] = roads[i];
                 if ((shopStateUpdatedFlags[road[0]] || shopStateUpdatedCachedFlags[road[0]])
                         && foundedStates[road[0]] != null
-                        && foundedStates[road[0]].length > 0) {
+                        && !foundedStates[road[0]].isEmpty()) {
                     updated = updateRelatedRoad(road[0], road[1], road[2]) || updated;
                 }
                 if ((shopStateUpdatedFlags[road[1]] || shopStateUpdatedCachedFlags[road[1]])
                         && foundedStates[road[1]] != null
-                        && foundedStates[road[1]].length > 0) {
+                        && !foundedStates[road[1]].isEmpty()) {
                     updated = updateRelatedRoad(road[1], road[0], road[2]) || updated;
                 }
             }
@@ -115,7 +122,7 @@ class Solution {
     private int findFastestWayFoTwoCats() {
         int shorterWayWeight = -1;
 
-        int[][] statesForLastShop = foundedStates[shopsCount - 1];
+        LinkedList<int[]> statesForLastShop = foundedStates[shopsCount - 1];
         for (int[] foundedState1 : statesForLastShop) {
             for (int[] foundedState2 : statesForLastShop) {
                 int maxWay;
@@ -131,67 +138,46 @@ class Solution {
 
     // update states for shop2 by merging states from shop1 if they better
     private boolean updateRelatedRoad(int shop1, int shop2, int weight) {
-        int[][] states1 = foundedStates[shop1];
-        List<int[]> states2 = new LinkedList<>();
-        int[][] states2Temp = foundedStates[shop2];
-        if (states2Temp != null) {
-            states2.addAll(Arrays.asList(states2Temp));
-        }
+        LinkedList<int[]> states1 = foundedStates[shop1];
+        LinkedList<int[]> states2 = foundedStates[shop2];
         boolean updated = false;
 
         for (int[] state1 : states1) {
-            if(minWayAlreadyFounded > 0
+            if (minWayAlreadyFounded > 0
                     && state1[1] > minWayAlreadyFounded) {
                 continue;
             }
 
-            boolean needToAddMergedState = true;
-            HashSet<Integer> states2ToRemove = new HashSet<>();
-            int statesToRemoveCount = 0;
-
             int[] newMergedState = mergeState(state1, shop2, weight);
 
-            if(minWayAlreadyFounded > 0
+            if (minWayAlreadyFounded > 0
                     && newMergedState[1] > minWayAlreadyFounded) {
                 continue;
             }
+            boolean needToAddMergedState = true;
 
             // find more optimized state
-            for (int j = 0; j < states2.size(); j++) {
+            Iterator iter = states2.iterator();
+            while (iter.hasNext()) {
+                int[] state2 = (int[]) iter.next();
 
-                if (newMergedState[0] == states2.get(j)[0]) { // bit masks equals
-                    if (newMergedState[1] < states2.get(j)[1]) {
-                        states2ToRemove.add(j);
-                        statesToRemoveCount++;
+                if (newMergedState[0] == state2[0]) { // bit masks equals
+                    if (newMergedState[1] < state2[1]) {
+                        iter.remove();
                     } else {
                         needToAddMergedState = false;
                     }
                 } else {
-                    int comparing = compareBitMasks(newMergedState[0], states2.get(j)[0]);
+                    int comparing = compareBitMasks(newMergedState[0], state2[0]);
                     if (comparing == 1) { // new mask better
-                        if (newMergedState[1] <= states2.get(j)[1]) { // new way better
-                            states2ToRemove.add(j);
-                            statesToRemoveCount++;
+                        if (newMergedState[1] <= state2[1]) { // new way better
+                            iter.remove();
                         }
                     } else if (comparing == -1) { // mask worth
-                        if (newMergedState[1] >= states2.get(j)[1])
+                        if (newMergedState[1] >= state2[1])
                             needToAddMergedState = false;
                     }
                 }
-            }
-
-            // remove old worth states
-            if (statesToRemoveCount > 0) {
-                // remove states from states2
-                Iterator iter = states2.iterator();
-                int itemNum = 0;
-                while (iter.hasNext()) {
-                    iter.next();
-                    if (states2ToRemove.contains(itemNum))
-                        iter.remove();
-                    itemNum++;
-                }
-                updated = true;
             }
             // add new states
             if (needToAddMergedState) {
@@ -200,18 +186,12 @@ class Solution {
             }
         }
 
-        int[][] updatedStates2 = new int[states2.size()][];
-//        for (int i = 0; i < updatedStates2.length; i++) {
-//            updatedStates2[i] = new int[states2.get(i).length];
-//        }
-
-        foundedStates[shop2] = states2.toArray(updatedStates2);
         shopStateUpdatedFlags[shop2] = updated || shopStateUpdatedFlags[shop2];
         return updated;
     }
 
     private int[] mergeState(int[] state1, int shop2, int roadWeight) {
-        int[] newStateAfterMerge = new int [2];
+        int[] newStateAfterMerge = new int[2];
         // compute new bit mask
         int bitMaskAfterMergeState = state1[0] | shopFishTypes[shop2];
         // compute new weight
