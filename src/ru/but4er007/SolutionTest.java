@@ -253,7 +253,7 @@ public class SolutionTest {
         // fill types
         int currentType = 1;
         for (int i = 1; i <= N; i++) {
-            if (i % 70 == 0) {
+            if (i % 5 == 0) {
                 builder.append("\n 1 ")
                         .append(currentType);
                 currentType = (currentType) % 10 + 1;

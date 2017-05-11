@@ -103,13 +103,11 @@ class Solution {
             updated = false;
             for (int i = 0; i < roadsCount; i++) {
                 int road[] = roads[i];
-                if ((shopStateUpdatedFlags[road[0]] || shopStateUpdatedCachedFlags[road[0]])
-                        && foundedStates[road[0]] != null
+                if ((shopStateUpdatedCachedFlags[road[0]] || shopStateUpdatedFlags[road[0]])
                         && !foundedStates[road[0]].isEmpty()) {
                     updated = updateRelatedRoad(road[0], road[1], road[2]) || updated;
                 }
-                if ((shopStateUpdatedFlags[road[1]] || shopStateUpdatedCachedFlags[road[1]])
-                        && foundedStates[road[1]] != null
+                if ((shopStateUpdatedCachedFlags[road[1]] || shopStateUpdatedFlags[road[1]])
                         && !foundedStates[road[1]].isEmpty()) {
                     updated = updateRelatedRoad(road[1], road[0], road[2]) || updated;
                 }
@@ -147,14 +145,14 @@ class Solution {
 
         for (int[] state1 : states1) {
             if (minWayAlreadyFounded > 0
-                    && state1[1] > minWayAlreadyFounded) {
+                    && state1[1] >= minWayAlreadyFounded) {
                 continue;
             }
 
             int[] newMergedState = mergeState(state1, shop2, weight);
 
             if (minWayAlreadyFounded > 0
-                    && newMergedState[1] > minWayAlreadyFounded) {
+                    && newMergedState[1] >= minWayAlreadyFounded) {
                 continue;
             }
             boolean needToAddMergedState = true;
@@ -187,7 +185,7 @@ class Solution {
                     }
                 }
             }
-            // add new states
+            // add new state
             if (needToAddMergedState) {
                 states2.add(newMergedState);
                 updated = true;
@@ -201,12 +199,10 @@ class Solution {
     private int[] mergeState(int[] state1, int shop2, int roadWeight) {
         int[] newStateAfterMerge = new int[2];
         // compute new bit mask
-        int bitMaskAfterMergeState = state1[0] | shopFishTypes[shop2];
+        newStateAfterMerge[0] = state1[0] | shopFishTypes[shop2];
         // compute new weight
-        int wayWeightAfterMerge = state1[1] + roadWeight;
+        newStateAfterMerge[1] = state1[1] + roadWeight;
 
-        newStateAfterMerge[0] = bitMaskAfterMergeState;
-        newStateAfterMerge[1] = wayWeightAfterMerge;
         return newStateAfterMerge;
     }
 
